@@ -279,7 +279,7 @@ const EmployeeTable = ({ onAction, onDelete, onViewDetails }) => {
               >
                 <option value="">All Status</option>
                 <option value="true">Probationary</option>
-                <option value="false">Permanent</option>
+                <option value="false">Full Time</option>
               </select>
             </div>
           </div>

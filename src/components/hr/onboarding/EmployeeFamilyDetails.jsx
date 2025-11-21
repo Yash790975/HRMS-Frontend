@@ -371,56 +371,7 @@ const EmployeeFamilyDetails = ({ employeeId, isLoading, setIsLoading, onNextTab,
           {errors.mothers_occupation && <span className="text-red-500 text-sm">{errors.mothers_occupation}</span>}
         </div>
 
-        {/* Spouse Details Section */}
-        {/* <div className="md:col-span-2 mt-4">
-          <h4 className="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">
-            Spouse Details <span className="text-sm font-normal text-gray-500">(Optional)</span>
-          </h4>
-        </div>
-
-        <div className="form-group">
-          <label className="block text-gray-700 font-medium mb-1">
-            Spouse's Full Name
-          </label>
-          <input
-            type="text"
-            value={familyDetails.spouse_full_name}
-            onChange={(e) => handleInputChange('spouse_full_name', e.target.value)}
-            placeholder="Enter spouse's full name"
-            disabled={isLoading}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
-          />
-          {errors.spouse_full_name && <span className="text-red-500 text-sm">{errors.spouse_full_name}</span>}
-        </div>
-
-        <div className="form-group">
-          <label className="block text-gray-700 font-medium mb-1">
-            Spouse's Date of Birth
-          </label>
-          <input
-            type="date"
-            value={familyDetails.spouse_dob}
-            onChange={(e) => handleInputChange('spouse_dob', e.target.value)}
-            disabled={isLoading}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
-          />
-          {errors.spouse_dob && <span className="text-red-500 text-sm">{errors.spouse_dob}</span>}
-        </div>
-
-        <div className="form-group md:col-span-2">
-          <label className="block text-gray-700 font-medium mb-1">
-            Spouse's Occupation
-          </label>
-          <input
-            type="text"
-            value={familyDetails.spouse_occupation}
-            onChange={(e) => handleInputChange('spouse_occupation', e.target.value)}
-            placeholder="Enter spouse's occupation"
-            disabled={isLoading}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
-          />
-          {errors.spouse_occupation && <span className="text-red-500 text-sm">{errors.spouse_occupation}</span>}
-        </div> */}
+    
         {maritalStatus === 'MARRIED' && (
   <>
     <div className="md:col-span-2 mt-4">

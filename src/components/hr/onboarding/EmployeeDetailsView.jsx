@@ -271,7 +271,35 @@ const EmployeeDetailsView = ({ employeeId, onBack }) => {
   }, [employeeId]);
 
   
-  // Bank account details
+  // DOCS account details
+  // useEffect(() => {
+  //   if (!employeeId) return;
+
+  //   const fetchDocumentChecklist = async () => {
+  //     try {
+  //       console.log("Fetching Documents for employee ID:", employeeId);
+  //       const response = await EmployeeDocumentChecklistAPI.getByEmployeeId(
+  //         employeeId
+  //       );
+  //       // console.log("Docssssssssssssssssss details response:", response.result?.last_3months_payslip_url);
+  //       console.log("Docsssssssssssssss:", response?.result);
+
+  //       if (response?.success && response?.result) {
+  //         setEmployeeDocumentChecklist(response.result);
+  //       }
+       
+  //     } catch (err) {
+  //       console.error("Error fetching Doc details:", err);
+      
+  //       // setBankDetails([]);
+  //     }
+  //   };
+
+  //   fetchDocumentChecklist();
+  // }, [employeeId]);
+
+
+  // DOCS account details
   useEffect(() => {
     if (!employeeId) return;
 
@@ -281,17 +309,26 @@ const EmployeeDetailsView = ({ employeeId, onBack }) => {
         const response = await EmployeeDocumentChecklistAPI.getByEmployeeId(
           employeeId
         );
-        console.log("Docs details response:", response);
-        console.log("Docs:", response?.result);
+        console.log("Docsssssssssssssss:", response?.result);
 
         if (response?.success && response?.result) {
-          setEmployeeDocumentChecklist(response.result);
+          // Parse the payslip URLs if they exist
+          const processedResult = { ...response.result };
+          if (processedResult.last_3months_payslip_url) {
+            try {
+              processedResult.last_3months_payslip_url = JSON.parse(
+                processedResult.last_3months_payslip_url
+              );
+            } catch (e) {
+              console.error("Error parsing payslip URLs:", e);
+              processedResult.last_3months_payslip_url = [];
+            }
+          }
+          setEmployeeDocumentChecklist(processedResult);
         }
        
       } catch (err) {
         console.error("Error fetching Doc details:", err);
-      
-        // setBankDetails([]);
       }
     };
 
@@ -309,7 +346,7 @@ const EmployeeDetailsView = ({ employeeId, onBack }) => {
     ) : (
       <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800 border border-emerald-200">
         <Badge className="w-4 h-4 mr-2" />
-        Permanent Employee
+        Full Time Employee
       </span>
     );
   };
@@ -1216,28 +1253,84 @@ const EmployeeDetailsView = ({ employeeId, onBack }) => {
         {
           label: "Relieving Letter",
           url: employeeDocumentChecklist.relieving_letter_url,
+        },
+        {
+          label: "Last 3 Months Salary Slips",
+          // url: employeeDocumentChecklist.last_3_months_salary_slips_url,
+          url: employeeDocumentChecklist.last_3months_payslip_url,
         }
       ]
-        .filter(item => item.url) // only documents that exist
+        // .filter(item => item.url) // only documents that exist
+        // .map((doc, index) => (
+        //   <div key={index} className="space-y-2">
+        //     <p className="text-sm font-medium text-gray-500">{doc.label}</p>
+        //     <a 
+        //       href={BASE_URL + doc.url} 
+        //       target="_blank" 
+        //       rel="noopener noreferrer"
+        //       className="block"
+        //     >
+        //       <img
+        //         src={BASE_URL + doc.url}
+        //         alt={doc.label}
+        //         className="w-full h-48 object-cover rounded-md border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+        //         onError={(e) => {
+        //           e.target.onerror = null;
+        //           e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+        //         }}
+        //       />
+        //     </a>
+        //   </div>
+        
+
+        .filter(item => item.url)
         .map((doc, index) => (
           <div key={index} className="space-y-2">
             <p className="text-sm font-medium text-gray-500">{doc.label}</p>
-            <a 
-              href={BASE_URL + doc.url} 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="block"
-            >
-              <img
-                src={BASE_URL + doc.url}
-                alt={doc.label}
-                className="w-full h-48 object-cover rounded-md border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
-                }}
-              />
-            </a>
+
+            {Array.isArray(doc.url) ? (
+              // If URL is array → render multiple images
+              doc.url.map((u, i) => (
+                
+                <a 
+                  key={i}
+                  href={BASE_URL + u}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                >
+                  <img
+                    src={BASE_URL + u}
+                    alt={`${doc.label} - ${i + 1}`}
+                    className="w-full h-48 object-cover rounded-md border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src =
+                        'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                    }}
+                  />
+                </a>
+              ))
+            ) : (
+              // If URL is single string → render one image
+              <a
+                href={BASE_URL + doc.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <img
+                  src={BASE_URL + doc.url}
+                  alt={doc.label}
+                  className="w-full h-48 object-cover rounded-md border shadow-sm hover:shadow-md transition-shadow cursor-pointer"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src =
+                      'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="100" height="100"%3E%3Crect fill="%23ddd" width="100" height="100"/%3E%3Ctext fill="%23999" x="50%25" y="50%25" dominant-baseline="middle" text-anchor="middle"%3ENo Image%3C/text%3E%3C/svg%3E';
+                  }}
+                />
+              </a>
+            )}
           </div>
         ))
       }
