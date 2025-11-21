@@ -386,7 +386,7 @@ const EmployeeBankDetails = ({ employeeId, isLoading, setIsLoading, onNextTab, o
             type="button"
             onClick={handleSaveAndNext}
             disabled={isLoading}
-            className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow-sm disabled:opacity-50"
+            className="px-5 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold shadow-sm disabled:opacity-50"
           >
             {isLoading ? 'Saving...' : 'Save & Next →'}
           </button>

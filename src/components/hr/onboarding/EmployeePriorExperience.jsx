@@ -106,26 +106,26 @@ const EmployeePriorExperience = ({ employeeId, isLoading, setIsLoading, onNextTa
   const validateExperienceDetails = () => {
     const newErrors = {};
 
-    if (!editingExperience.post_held?.trim()) {
-      newErrors.post_held = 'Post held is required';
-    }
-    if (!editingExperience.department_function?.trim()) {
-      newErrors.department_function = 'Department/Function is required';
-    }
-    if (!editingExperience.company_name_size?.trim()) {
-      newErrors.company_name_size = 'Company name & size is required';
-    }
-    if (!editingExperience.city?.trim()) {
-      newErrors.city = 'City is required';
-    }
-    if (!editingExperience.tenure_years_months?.toString().trim()) {
-      newErrors.tenure_years_months = 'Tenure is required';
-    } else {
-      const tenure = parseFloat(editingExperience.tenure_years_months);
-      if (isNaN(tenure) || tenure < 0) {
-        newErrors.tenure_years_months = 'Tenure must be a valid positive number';
-      }
-    }
+    // if (!editingExperience.post_held?.trim()) {
+    //   newErrors.post_held = 'Post held is required';
+    // }
+    // if (!editingExperience.department_function?.trim()) {
+    //   newErrors.department_function = 'Department/Function is required';
+    // }
+    // if (!editingExperience.company_name_size?.trim()) {
+    //   newErrors.company_name_size = 'Company name & size is required';
+    // }
+    // if (!editingExperience.city?.trim()) {
+    //   newErrors.city = 'City is required';
+    // }
+    // if (!editingExperience.tenure_years_months?.toString().trim()) {
+    //   newErrors.tenure_years_months = 'Tenure is required';
+    // } else {
+    //   const tenure = parseFloat(editingExperience.tenure_years_months);
+    //   if (isNaN(tenure) || tenure < 0) {
+    //     newErrors.tenure_years_months = 'Tenure must be a valid positive number';
+    //   }
+    // }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -425,7 +425,7 @@ const EmployeePriorExperience = ({ employeeId, isLoading, setIsLoading, onNextTa
   type="button"
   onClick={handleSaveAndNext}
   disabled={isLoading}
-  className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow-sm disabled:opacity-50"
+  className="px-5 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold shadow-sm disabled:opacity-50"
 >
   {isLoading ? 'Saving...' : 'Save & Next →'}
 </button>
