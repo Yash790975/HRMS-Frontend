@@ -260,7 +260,7 @@ const EmployeePassportDetails = ({ employeeId, isLoading, setIsLoading, onNextTa
       showModal("Error", msg.includes("already exists")
         ? "This passport number already exists. Please use a different number."
         : msg
-      );
+      );  
       return false;
     } finally {
       setIsLoading(false);

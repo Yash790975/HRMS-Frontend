@@ -1,10 +1,19 @@
 import { useState, useEffect } from 'react';
 import { EmployeeReferenceseAPI } from '../../../api/employeeReferences';
+import Modal from './AlertModal';
 
 const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, onComplete }) => {
   const [currentReferenceIndex, setCurrentReferenceIndex] = useState(0);
   const [references, setReferences] = useState([]);
   const [errors, setErrors] = useState({});
+  const [modalConfig, setModalConfig] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    type: 'info',
+    onConfirm: null,
+    showCancel: false
+  });
   const [editingReference, setEditingReference] = useState({
     id: null,
     reference_name: '',
@@ -13,6 +22,22 @@ const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, on
     organization: '',
     relationship_with_reference: ''
   });
+
+  // Helper function to show modal
+  const showModal = (title, message, type = 'info', onConfirm = null, showCancel = false) => {
+    setModalConfig({
+      isOpen: true,
+      title,
+      message,
+      type,
+      onConfirm,
+      showCancel
+    });
+  };
+
+  const closeModal = () => {
+    setModalConfig(prev => ({ ...prev, isOpen: false }));
+  };
 
   // Fetch references when component mounts or employeeId changes
   useEffect(() => {
@@ -77,7 +102,7 @@ const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, on
   };
 
   const handleSaveAndNext = async () => {
-    // 🔥 Check if form is empty - allow skipping if no data entered
+    // Check if form is empty - allow skipping if no data entered
     const hasAnyData = 
       editingReference.reference_name?.trim() ||
       editingReference.reference_mobile_number?.trim() ||
@@ -115,7 +140,6 @@ const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, on
     }
   };
 
-  // 🔥 Updated validation - only validate if user has started filling
   const validateReferenceDetails = () => {
     const newErrors = {};
 
@@ -160,7 +184,7 @@ const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, on
   };
 
   const saveCurrentReference = async () => {
-    // 🔥 Check if form is completely empty - allow skipping
+    // Check if form is completely empty - allow skipping
     const hasAnyData = 
       editingReference.reference_name?.trim() ||
       editingReference.reference_mobile_number?.trim() ||
@@ -178,7 +202,7 @@ const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, on
     }
 
     if (!employeeId) {
-      alert('Please save personal details first');
+      showModal('Error', 'Please save personal details first', 'error');
       return false;
     }
 
@@ -230,14 +254,19 @@ const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, on
           setCurrentReferenceIndex(references.length);
         }
         
+        showModal(
+          'Success',
+          `Reference ${isUpdate ? 'updated' : 'added'} successfully!`,
+          'success'
+        );
         return true;
       } else {
-        alert(response.message || 'Failed to save reference details');
+        showModal('Error', response.message || 'Failed to save reference details', 'error');
         return false;
       }
     } catch (error) {
       console.error('Error saving reference details:', error);
-      alert(error.message || 'Backend server is not responding');
+      showModal('Error', error.message || 'Backend server is not responding', 'error');
       return false;
     } finally {
       setIsLoading(false);
@@ -278,40 +307,45 @@ const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, on
 
   const handleDeleteReference = async () => {
     if (!editingReference.id) {
-      alert('Cannot delete unsaved reference');
+      showModal('Error', 'Cannot delete unsaved reference', 'error');
       return;
     }
 
-    if (!window.confirm('Are you sure you want to delete this reference?')) {
-      return;
-    }
+    showModal(
+      'Confirm Delete',
+      'Are you sure you want to delete this reference?',
+      'warning',
+      async () => {
+        try {
+          setIsLoading(true);
+          const response = await EmployeeReferenceseAPI.delete(editingReference.id);
 
-    try {
-      setIsLoading(true);
-      const response = await EmployeeReferenceseAPI.delete(editingReference.id);
+          if (response.success) {
+            const updatedReferences = references.filter((_, idx) => idx !== currentReferenceIndex);
+            setReferences(updatedReferences);
 
-      if (response.success) {
-        const updatedReferences = references.filter((_, idx) => idx !== currentReferenceIndex);
-        setReferences(updatedReferences);
+            if (updatedReferences.length > 0) {
+              const newIndex = Math.min(currentReferenceIndex, updatedReferences.length - 1);
+              setCurrentReferenceIndex(newIndex);
+              setEditingReference(updatedReferences[newIndex]);
+            } else {
+              handleAddNewReference();
+            }
 
-        if (updatedReferences.length > 0) {
-          const newIndex = Math.min(currentReferenceIndex, updatedReferences.length - 1);
-          setCurrentReferenceIndex(newIndex);
-          setEditingReference(updatedReferences[newIndex]);
-        } else {
-          handleAddNewReference();
+            showModal('Success', 'Reference deleted successfully!', 'success');
+          } else {
+            showModal('Error', response.message || 'Failed to delete reference', 'error');
+          }
+        } catch (error) {
+          console.error('Error deleting reference:', error);
+          showModal('Error', 'Failed to delete reference', 'error');
+        } finally {
+          setIsLoading(false);
         }
-
-        alert('Reference deleted successfully!');
-      } else {
-        alert(response.message || 'Failed to delete reference');
-      }
-    } catch (error) {
-      console.error('Error deleting reference:', error);
-      alert('Failed to delete reference');
-    } finally {
-      setIsLoading(false);
-    }
+        closeModal();
+      },
+      true
+    );
   };
 
   const getReferenceDisplayInfo = () => {
@@ -331,6 +365,17 @@ const EmployeeReferences = ({ employeeId, isLoading, setIsLoading, onNextTab, on
 
   return (
     <div className="reference-section p-6 bg-white rounded-2xl shadow-md">
+      {/* Modal */}
+      <Modal
+        isOpen={modalConfig.isOpen}
+        onClose={closeModal}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        type={modalConfig.type}
+        onConfirm={modalConfig.onConfirm}
+        showCancel={modalConfig.showCancel}
+      />
+
       {/* Header with navigation info */}
       <div className="reference-header mb-6 border-b pb-3">
         <h3 className="text-2xl font-semibold text-gray-800">{getReferenceDisplayInfo().displayText}</h3>
@@ -526,6 +571,38 @@ export default EmployeeReferences;
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // import { useState, useEffect } from 'react';
 // import { EmployeeReferenceseAPI } from '../../../api/employeeReferences';
 
@@ -605,11 +682,27 @@ export default EmployeeReferences;
 //   };
 
 //   const handleSaveAndNext = async () => {
+//     // 🔥 Check if form is empty - allow skipping if no data entered
+//     const hasAnyData = 
+//       editingReference.reference_name?.trim() ||
+//       editingReference.reference_mobile_number?.trim() ||
+//       editingReference.area?.trim() ||
+//       editingReference.organization?.trim() ||
+//       editingReference.relationship_with_reference?.trim();
+
+//     if (!hasAnyData && references.length === 0) {
+//       // Form is empty and no references exist, just move to next tab
+//       if (typeof onNextTab === 'function') {
+//         onComplete?.();
+//         onNextTab();
+//       }
+//       return;
+//     }
+
 //     const saved = await saveCurrentReference();
 //     if (saved && typeof onNextTab === 'function') {
-//       onComplete?.(); // ✅ Mark this tab as completed
-//         // alert('Reference saved successfully!');
-//       onNextTab(); // move to next tab
+//       onComplete?.();
+//       onNextTab();
 //     }
 //   };
 
@@ -627,32 +720,44 @@ export default EmployeeReferences;
 //     }
 //   };
 
+//   // 🔥 Updated validation - only validate if user has started filling
 //   const validateReferenceDetails = () => {
 //     const newErrors = {};
 
-//     if (!editingReference.reference_name?.trim()) {
-//       newErrors.reference_name = 'Reference name is required';
-//     }
+//     // Check if user has started filling any field
+//     const hasAnyData = 
+//       editingReference.reference_name?.trim() ||
+//       editingReference.reference_mobile_number?.trim() ||
+//       editingReference.area?.trim() ||
+//       editingReference.organization?.trim() ||
+//       editingReference.relationship_with_reference?.trim();
 
-//     if (!editingReference.reference_mobile_number?.trim()) {
-//       newErrors.reference_mobile_number = 'Mobile number is required';
-//     } else {
-//       const mobilePattern = /^[0-9]{10}$/;
-//       if (!mobilePattern.test(editingReference.reference_mobile_number.trim())) {
-//         newErrors.reference_mobile_number = 'Mobile number must be 10 digits';
+//     // Only validate if user has started filling the form
+//     if (hasAnyData) {
+//       if (!editingReference.reference_name?.trim()) {
+//         newErrors.reference_name = 'Reference name is required';
 //       }
-//     }
 
-//     if (!editingReference.area?.trim()) {
-//       newErrors.area = 'Area/Domain is required';
-//     }
+//       if (!editingReference.reference_mobile_number?.trim()) {
+//         newErrors.reference_mobile_number = 'Mobile number is required';
+//       } else {
+//         const mobilePattern = /^[0-9]{10}$/;
+//         if (!mobilePattern.test(editingReference.reference_mobile_number.trim())) {
+//           newErrors.reference_mobile_number = 'Mobile number must be 10 digits';
+//         }
+//       }
 
-//     if (!editingReference.organization?.trim()) {
-//       newErrors.organization = 'Organization is required';
-//     }
+//       if (!editingReference.area?.trim()) {
+//         newErrors.area = 'Area/Domain is required';
+//       }
 
-//     if (!editingReference.relationship_with_reference?.trim()) {
-//       newErrors.relationship_with_reference = 'Relationship with reference is required';
+//       if (!editingReference.organization?.trim()) {
+//         newErrors.organization = 'Organization is required';
+//       }
+
+//       if (!editingReference.relationship_with_reference?.trim()) {
+//         newErrors.relationship_with_reference = 'Relationship with reference is required';
+//       }
 //     }
 
 //     setErrors(newErrors);
@@ -660,6 +765,19 @@ export default EmployeeReferences;
 //   };
 
 //   const saveCurrentReference = async () => {
+//     // 🔥 Check if form is completely empty - allow skipping
+//     const hasAnyData = 
+//       editingReference.reference_name?.trim() ||
+//       editingReference.reference_mobile_number?.trim() ||
+//       editingReference.area?.trim() ||
+//       editingReference.organization?.trim() ||
+//       editingReference.relationship_with_reference?.trim();
+
+//     if (!hasAnyData) {
+//       // Form is empty, just return true to allow moving forward
+//       return true;
+//     }
+
 //     if (!validateReferenceDetails()) {
 //       return false;
 //     }
@@ -717,7 +835,6 @@ export default EmployeeReferences;
 //           setCurrentReferenceIndex(references.length);
 //         }
         
-//         // alert(`Reference ${isUpdate ? 'updated' : 'added'} successfully!`);
 //         return true;
 //       } else {
 //         alert(response.message || 'Failed to save reference details');
@@ -820,15 +937,16 @@ export default EmployeeReferences;
 //   return (
 //     <div className="reference-section p-6 bg-white rounded-2xl shadow-md">
 //       {/* Header with navigation info */}
-//       <div className="reference-header mb-6 border-b pb-2">
+//       <div className="reference-header mb-6 border-b pb-3">
 //         <h3 className="text-2xl font-semibold text-gray-800">{getReferenceDisplayInfo().displayText}</h3>
+//         <p className="text-sm text-gray-600 mt-1">Add employee references (Optional - Skip if not applicable)</p>
 //       </div>
 
 //       {/* Form Fields */}
 //       <div className="form-grid grid grid-cols-1 md:grid-cols-2 gap-6">
 //         <div className="form-group">
 //           <label className="block text-gray-700 font-medium mb-1">
-//             Reference Name <span className="text-red-500">*</span>
+//             Reference Name
 //           </label>
 //           <input
 //             type="text"
@@ -843,7 +961,7 @@ export default EmployeeReferences;
 
 //         <div className="form-group">
 //           <label className="block text-gray-700 font-medium mb-1">
-//             Mobile Number <span className="text-red-500">*</span>
+//             Mobile Number
 //           </label>
 //           <input
 //             type="text"
@@ -859,7 +977,7 @@ export default EmployeeReferences;
 
 //         <div className="form-group">
 //           <label className="block text-gray-700 font-medium mb-1">
-//             Area/Domain <span className="text-red-500">*</span>
+//             Area/Domain
 //           </label>
 //           <input
 //             type="text"
@@ -874,7 +992,7 @@ export default EmployeeReferences;
 
 //         <div className="form-group">
 //           <label className="block text-gray-700 font-medium mb-1">
-//             Organization <span className="text-red-500">*</span>
+//             Organization
 //           </label>
 //           <input
 //             type="text"
@@ -889,7 +1007,7 @@ export default EmployeeReferences;
 
 //         <div className="form-group md:col-span-2">
 //           <label className="block text-gray-700 font-medium mb-1">
-//             Relationship with Reference <span className="text-red-500">*</span>
+//             Relationship with Reference
 //           </label>
 //           <input
 //             type="text"
@@ -950,7 +1068,7 @@ export default EmployeeReferences;
 //             type="button"
 //             onClick={handleSaveAndNext}
 //             disabled={isLoading}
-//             className="px-5 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition font-semibold shadow-sm disabled:opacity-50"
+//             className="px-5 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-semibold shadow-sm disabled:opacity-50"
 //           >
 //             {isLoading ? 'Saving...' : 'Save & Next →'}
 //           </button>
@@ -969,11 +1087,14 @@ export default EmployeeReferences;
 //       </div>
 
 //       {/* Info Display */}
-//       <div className="reference-info mt-6 text-gray-700 text-sm">
-//         <p>Total References: {references.length}</p>
+//       <div className="reference-info mt-6 text-gray-700 text-sm bg-blue-50 p-4 rounded-lg">
+//         <p className="font-medium">Total References: {references.length}</p>
 //         {references.length > 0 && (
 //           <p>Viewing: {currentReferenceIndex + 1} of {references.length}</p>
 //         )}
+//         <p className="text-xs text-gray-600 mt-2">
+//           ℹ️ References are optional. You can skip this section by clicking "Save & Next" without adding any references.
+//         </p>
 //       </div>
 //     </div>
 //   );
