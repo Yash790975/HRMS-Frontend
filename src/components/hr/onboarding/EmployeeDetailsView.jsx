@@ -614,6 +614,11 @@ const EmployeeDetailsView = ({ employeeId, onBack }) => {
                   value={employee.hobbies}
                   icon={AlignVerticalJustifyEnd}
                 />
+                <DetailItem
+                  label="University/Collage Name"
+                  value={employee.university_name}
+                  icon={AlignVerticalJustifyEnd}
+                />
               </div>
             </div>
           </InfoCard>

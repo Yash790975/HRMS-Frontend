@@ -12,6 +12,7 @@ const EmployeeManagementTable = ({ employees: propEmployees = [], onAction, onDe
   const [filterDesignation, setFilterDesignation] = useState("");
   const [filterMobile, setFilterMobile] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
+  const [filterUniversity, setFilterUniversity] = useState("");
   const [loading, setLoading] = useState(true);
   
   const [currentPage, setCurrentPage] = useState(1);
@@ -66,6 +67,15 @@ const EmployeeManagementTable = ({ employees: propEmployees = [], onAction, onDe
     ),
   ];
 
+  const universityList = [
+  ...new Set(
+    employees
+      .map((emp) => emp.university_name)
+      .filter(Boolean)
+  ),
+];
+
+
   const filteredEmployees = employees.filter((emp) => {
     const name = `${emp.first_name} ${emp.middle_name || ""} ${emp.last_name || ""}`
       .trim()
@@ -74,6 +84,7 @@ const EmployeeManagementTable = ({ employees: propEmployees = [], onAction, onDe
     const empCode = emp.employee_code?.toLowerCase() || "";
     const department = emp.employment_details?.department?.name || "";
     const designation = emp.employment_details?.designation?.name || "";
+    const universityName = emp.university_name || "";
     const mobileNumber = emp.employee_mobile_number || "";
     const officeLocation = emp.employment_details?.office_location?.name || "";
 
@@ -86,10 +97,11 @@ const EmployeeManagementTable = ({ employees: propEmployees = [], onAction, onDe
     const matchesDepartment = !filterDepartment || department === filterDepartment;
     const matchesDesignation = !filterDesignation || designation === filterDesignation;
     const matchesMobile = !filterMobile || mobileNumber.includes(filterMobile);
+    const matchesUniversity = !filterUniversity || universityName === filterUniversity;
     const matchesLocation = !filterLocation || officeLocation === filterLocation;
 
     return matchesSearch && matchesDepartment && matchesDesignation && 
-           matchesMobile && matchesLocation;
+           matchesMobile && matchesLocation && matchesUniversity;
   });
 
   const totalPages = Math.ceil(filteredEmployees.length / itemsPerPage);
@@ -116,10 +128,12 @@ const EmployeeManagementTable = ({ employees: propEmployees = [], onAction, onDe
     setFilterDesignation("");
     setFilterMobile("");
     setFilterLocation("");
+    setFilterUniversity("");
+
   };
 
   const hasActiveFilters = searchTerm || filterDepartment || filterDesignation || 
-                           filterMobile || filterLocation;
+                           filterMobile || filterLocation || filterUniversity;
 
   if (loading) {
     return (
@@ -210,6 +224,22 @@ const EmployeeManagementTable = ({ employees: propEmployees = [], onAction, onDe
                 </option>
               ))}
             </select>
+
+
+            {/* University Filter */}
+            <select
+              value={filterUniversity}
+              onChange={(e) => setFilterUniversity(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+            >
+              <option value="">All Universities</option>
+              {universityList.map((univ) => (
+                <option key={univ} value={univ}>
+                  {univ}
+                </option>
+              ))}
+            </select>
+
           </div>
         </div>
       </div>

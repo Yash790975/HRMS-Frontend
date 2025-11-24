@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+ import React, { useEffect, useState } from "react";
 import { Eye, Edit, Trash2, Search, Filter, MapPin, CheckCircle, X } from "lucide-react";
 import { formatDate } from "../../../utils/helpers";
 import { EmployeeMasterAPI } from "../../../api/employeeMaster";
@@ -16,6 +16,8 @@ const EmployeeTable = ({ onAction, onDelete, onViewDetails }) => {
   const [filterMobile, setFilterMobile] = useState("");
   const [filterLocation, setFilterLocation] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
+  const [filterUniversity, setFilterUniversity] = useState("");
+
   const [filterEmploymentStatus, setFilterEmploymentStatus] = useState("On_Progress"); // Default to On_Progress
   const [loading, setLoading] = useState(true);
   
@@ -69,6 +71,14 @@ const EmployeeTable = ({ onAction, onDelete, onViewDetails }) => {
     ),
   ];
 
+const universityList = [
+  ...new Set(
+    employees
+      .map((emp) => emp.university_name)
+      .filter(Boolean)
+  ),
+];
+
   // Helper function to get current employment status
   const getCurrentStatus = (emp) => {
     return emp.employment_details?.status_history?.[
@@ -88,6 +98,7 @@ const EmployeeTable = ({ onAction, onDelete, onViewDetails }) => {
     const department = emp.employment_details?.department?.name || "";
     const designation = emp.employment_details?.designation?.name || "";
     const mobileNumber = emp.employee_mobile_number || "";
+    const universityName = emp.university_name || "";
     const officeLocation = emp.employment_details?.office_location?.name || "";
     const isProbation = emp.employment_details?.is_probation ? "true" : "false";
     const currentStatus = getCurrentStatus(emp);
@@ -107,6 +118,9 @@ const EmployeeTable = ({ onAction, onDelete, onViewDetails }) => {
     const matchesMobile =
       !filterMobile || mobileNumber.includes(filterMobile);
 
+    const matchesUniversity =
+      !filterUniversity || universityName === filterUniversity;
+
     const matchesLocation =
       !filterLocation || officeLocation === filterLocation;
 
@@ -117,7 +131,7 @@ const EmployeeTable = ({ onAction, onDelete, onViewDetails }) => {
       !filterEmploymentStatus || currentStatus === filterEmploymentStatus;
 
     return matchesSearch && matchesDepartment && matchesDesignation && 
-           matchesMobile && matchesLocation && matchesStatus && matchesEmploymentStatus;
+           matchesMobile && matchesLocation && matchesStatus && matchesEmploymentStatus && matchesUniversity;
   });
 
   const clearAllFilters = () => {
@@ -127,11 +141,14 @@ const EmployeeTable = ({ onAction, onDelete, onViewDetails }) => {
     setFilterMobile("");
     setFilterLocation("");
     setFilterStatus("");
-    setFilterEmploymentStatus("");
+    // setFilterEmploymentStatus("");
+    setFilterUniversity("");
+
   };
 
   const hasActiveFilters = searchTerm || filterDepartment || filterDesignation || 
-                           filterMobile || filterLocation || filterStatus || filterEmploymentStatus;
+                           filterMobile || filterLocation || filterStatus || filterUniversity;
+                          //  || filterEmploymentStatus;
 
   const handleOpenActivationModal = (employee) => {
     setSelectedEmployee(employee);
@@ -256,6 +273,21 @@ const EmployeeTable = ({ onAction, onDelete, onViewDetails }) => {
                   className="px-3 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
                 />
               </div>
+
+              {/* University Filter */}
+                <select
+                  value={filterUniversity}
+                  onChange={(e) => setFilterUniversity(e.target.value)}
+                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                >
+                  <option value="">All Universities</option>
+                  {universityList.map((univ) => (
+                    <option key={univ} value={univ}>
+                      {univ}
+                    </option>
+                  ))}
+                </select>
+
 
               {/* Office Location Filter */}
               <select
@@ -531,13 +563,6 @@ export default EmployeeTable;
 
 
 
-
-
-
-
-
-
-
 // import React, { useEffect, useState } from "react";
 // import { Eye, Edit, Trash2, Search, Filter, MapPin, CheckCircle, X } from "lucide-react";
 // import { formatDate } from "../../../utils/helpers";
@@ -556,14 +581,13 @@ export default EmployeeTable;
 //   const [filterMobile, setFilterMobile] = useState("");
 //   const [filterLocation, setFilterLocation] = useState("");
 //   const [filterStatus, setFilterStatus] = useState("");
-//   const [filterActiveStatus, setFilterActiveStatus] = useState(""); // New filter for is_active
+//   const [filterEmploymentStatus, setFilterEmploymentStatus] = useState("On_Progress"); // Default to On_Progress
 //   const [loading, setLoading] = useState(true);
   
 //   // Modal state
 //   const [isActivationModalOpen, setIsActivationModalOpen] = useState(false);
 //   const [selectedEmployee, setSelectedEmployee] = useState(null);
 
-//   // ✅ Fetch employees, departments, and designations from API
 //   useEffect(() => { 
 //     fetchData();
 //   }, []);
@@ -572,7 +596,6 @@ export default EmployeeTable;
 //     try {
 //       setLoading(true);
       
-//       // Fetch all data in parallel
 //       const [employeesRes, departmentsRes, designationsRes] = await Promise.all([
 //         EmployeeMasterAPI.getAll(),
 //         DepartmentsAPI.getAll(),
@@ -603,7 +626,6 @@ export default EmployeeTable;
 //     }
 //   };
 
-//   // ✅ Extract unique office locations for filter dropdown
 //   const officeLocations = [
 //     ...new Set(
 //       employees
@@ -612,7 +634,14 @@ export default EmployeeTable;
 //     ),
 //   ];
 
-//   // ✅ Apply filters
+//   // Helper function to get current employment status
+//   const getCurrentStatus = (emp) => {
+//     return emp.employment_details?.status_history?.[
+//       emp.employment_details.status_history.length - 1
+//     ]?.status;
+//   };
+
+//   // Apply filters
 //   const filteredEmployees = employees.filter((emp) => {
 //     const name = `${emp.first_name} ${emp.middle_name || ""} ${
 //       emp.last_name || ""
@@ -626,6 +655,7 @@ export default EmployeeTable;
 //     const mobileNumber = emp.employee_mobile_number || "";
 //     const officeLocation = emp.employment_details?.office_location?.name || "";
 //     const isProbation = emp.employment_details?.is_probation ? "true" : "false";
+//     const currentStatus = getCurrentStatus(emp);
 
 //     const matchesSearch =
 //       !searchTerm ||
@@ -648,11 +678,13 @@ export default EmployeeTable;
 //     const matchesStatus =
 //       !filterStatus || isProbation === filterStatus.toLowerCase();
 
+//     const matchesEmploymentStatus =
+//       !filterEmploymentStatus || currentStatus === filterEmploymentStatus;
+
 //     return matchesSearch && matchesDepartment && matchesDesignation && 
-//            matchesMobile && matchesLocation && matchesStatus;
+//            matchesMobile && matchesLocation && matchesStatus && matchesEmploymentStatus;
 //   });
 
-//   // ✅ Clear all filters
 //   const clearAllFilters = () => {
 //     setSearchTerm("");
 //     setFilterDepartment("");
@@ -660,13 +692,13 @@ export default EmployeeTable;
 //     setFilterMobile("");
 //     setFilterLocation("");
 //     setFilterStatus("");
+//     // setFilterEmploymentStatus("");
 //   };
 
-//   // ✅ Check if any filter is active
 //   const hasActiveFilters = searchTerm || filterDepartment || filterDesignation || 
 //                            filterMobile || filterLocation || filterStatus;
+//                             // || filterEmploymentStatus;
 
-//   // ✅ Handle activation modal
 //   const handleOpenActivationModal = (employee) => {
 //     setSelectedEmployee(employee);
 //     setIsActivationModalOpen(true);
@@ -677,13 +709,11 @@ export default EmployeeTable;
 //     setSelectedEmployee(null);
 //   };
 
-//   // ✅ Handle employee activation (only is_active and status)
 //   const handleActivateEmployee = async (employeeId) => {
 //     try {
 //       const response = await EmployeeMasterAPI.activate(employeeId);
       
 //       if (response?.success) {
-//         // Refresh employee data
 //         await fetchData();
 //         return response;
 //       } else {
@@ -695,13 +725,11 @@ export default EmployeeTable;
 //     }
 //   };
 
-//   // ✅ Handle probation confirmation (only probation-related fields)
 //   const handleConfirmProbation = async (employeeId) => {
 //     try {
 //       const response = await EmployeeMasterAPI.confirmProbation(employeeId);
       
 //       if (response?.success) {
-//         // Refresh employee data
 //         await fetchData();
 //         return response;
 //       } else {
@@ -710,23 +738,6 @@ export default EmployeeTable;
 //     } catch (error) {
 //       console.error("Error confirming probation:", error);
 //       throw error;
-//     }
-//   };
-
-//   // ✅ Fixed: Now passes employee_id instead of entire employee object
-//   const handleViewClick = (employee) => {
-//     console.log('=== HANDLE VIEW CLICK ===');
-//     console.log('Full employee object:', employee);
-//     console.log('Employee ID:', employee.employee_id);
-//     console.log('onViewDetails exists?', !!onViewDetails);
-//     console.log('onAction exists?', !!onAction);
-    
-//     if (onViewDetails) {
-//       console.log('Calling onViewDetails with ID:', employee.employee_id);
-//       onViewDetails(employee.employee_id);
-//     } else if (onAction) {
-//       console.log('Calling onAction with ID:', employee.employee_id);
-//       onAction("view", employee.employee_id);
 //     }
 //   };
 
@@ -826,7 +837,7 @@ export default EmployeeTable;
 //                 ))}
 //               </select>
 
-//               {/* Status Filter */}
+//               {/* Probation Status Filter */}
 //               <select
 //                 value={filterStatus}
 //                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -834,7 +845,7 @@ export default EmployeeTable;
 //               >
 //                 <option value="">All Status</option>
 //                 <option value="true">Probationary</option>
-//                 <option value="false">Permanent</option>
+//                 <option value="false">Full Time</option>
 //               </select>
 //             </div>
 //           </div>
@@ -880,127 +891,125 @@ export default EmployeeTable;
 //                   </td>
 //                 </tr>
 //               ) : (
-//                 filteredEmployees.map((emp) => (
-//                   <tr key={emp.employee_id} className="hover:bg-gray-50">
-//                     {/* Employee */}
-//                     <td className="px-6 py-4">
-//                       <div>
-//                         <div className="text-sm font-medium text-gray-900">
-//                           {`${emp.first_name} ${emp.middle_name || ""} ${
-//                             emp.last_name || ""
-//                           }`}
-//                         </div>
-//                         <div className="text-sm text-gray-500">
-//                           {emp.employment_details?.designation?.name || "N/A"}
-//                         </div>
-//                       </div>
-//                     </td>
-
-//                     {/* Contact */}
-//                     <td className="px-6 py-4">
-//                       <div>
-//                         <div className="text-sm text-gray-900">
-//                           {emp.employment_details?.official_email ||
-//                             emp.personal_email ||
-//                             "N/A"}
-//                         </div>
-//                         <div className="text-sm text-gray-500">
-//                           {emp.employee_mobile_number || "N/A"}
-//                         </div>
-//                         {emp.current_city && (
-//                           <div className="flex items-center text-sm text-gray-500">
-//                             <MapPin className="w-3 h-3 mr-1" />
-//                             {emp.current_city}
+//                 filteredEmployees.map((emp) => {
+//                   const currentStatus = getCurrentStatus(emp);
+                  
+//                   return (
+//                     <tr key={emp.employee_id} className="hover:bg-gray-50">
+//                       {/* Employee */}
+//                       <td className="px-6 py-4">
+//                         <div>
+//                           <div className="text-sm font-medium text-gray-900">
+//                             {`${emp.first_name} ${emp.middle_name || ""} ${
+//                               emp.last_name || ""
+//                             }`}
 //                           </div>
-//                         )}
-//                       </div>
-//                     </td>
-
-//                     {/* Employment */}
-//                     <td className="px-6 py-4">
-//                       <div>
-//                         <div className="text-sm font-medium text-gray-900">
-//                           {emp.employee_code || "N/A"}
+//                           <div className="text-sm text-gray-500">
+//                             {emp.employment_details?.designation?.name || "N/A"}
+//                           </div>
 //                         </div>
-//                         <div className="text-sm text-gray-500">
-//                           {emp.employment_details?.department?.name || "N/A"}
+//                       </td>
+
+//                       {/* Contact */}
+//                       <td className="px-6 py-4">
+//                         <div>
+//                           <div className="text-sm text-gray-900">
+//                             {emp.employment_details?.official_email ||
+//                               emp.personal_email ||
+//                               "N/A"}
+//                           </div>
+//                           <div className="text-sm text-gray-500">
+//                             {emp.employee_mobile_number || "N/A"}
+//                           </div>
+//                           {emp.current_city && (
+//                             <div className="flex items-center text-sm text-gray-500">
+//                               <MapPin className="w-3 h-3 mr-1" />
+//                               {emp.current_city}
+//                             </div>
+//                           )}
 //                         </div>
-//                         <div className="text-sm text-gray-500">
-//                           Joined:{" "}
-//                           {formatDate(
-//                             emp.employment_details?.date_of_joining
-//                           ) || "N/A"}
+//                       </td>
+
+//                       {/* Employment */}
+//                       <td className="px-6 py-4">
+//                         <div>
+//                           <div className="text-sm font-medium text-gray-900">
+//                             {emp.employee_code || "N/A"}
+//                           </div>
+//                           <div className="text-sm text-gray-500">
+//                             {emp.employment_details?.department?.name || "N/A"}
+//                           </div>
+//                           <div className="text-sm text-gray-500">
+//                             Joined:{" "}
+//                             {formatDate(
+//                               emp.employment_details?.date_of_joining
+//                             ) || "N/A"}
+//                           </div>
 //                         </div>
-//                       </div>
-//                     </td>
+//                       </td>
 
-//                     {/* Status */}
-//                     <td className="px-6 py-4 whitespace-nowrap">
-//                       {(() => {
-//                         const status =
-//                           emp.employment_details?.status_history?.[
-//                             emp.employment_details.status_history.length - 1
-//                           ]?.status;
+//                       {/* Status */}
+//                       <td className="px-6 py-4 whitespace-nowrap">
+//                         {(() => {
+//                           const base = "px-3 py-1 text-xs font-semibold rounded-full border";
+//                           const color =
+//                             currentStatus === "Active"
+//                               ? "bg-green-100 text-green-700 border-green-300"
+//                               : currentStatus === "On_Progress"
+//                               ? "bg-blue-100 text-blue-700 border-blue-300"
+//                               : currentStatus === "On_Notice"
+//                               ? "bg-yellow-100 text-yellow-700 border-yellow-300"
+//                               : currentStatus === "Resigned"
+//                               ? "bg-orange-100 text-orange-700 border-orange-300"
+//                               : currentStatus === "Terminated"
+//                               ? "bg-red-100 text-red-700 border-red-300"
+//                               : currentStatus === "Retired"
+//                               ? "bg-gray-200 text-gray-700 border-gray-300"
+//                               : "bg-gray-100 text-gray-600 border-gray-300";
 
-//                         const base = "px-3 py-1 text-xs font-semibold rounded-full border";
+//                           return <span className={`${base} ${color}`}>{currentStatus || "N/A"}</span>;
+//                         })()}
+//                       </td>
 
-//                         const color =
-//                           status === "Active"
-//                             ? "bg-green-100 text-green-700 border-green-300"
-//                             : status === "On_Progress"
-//                             ? "bg-blue-100 text-blue-700 border-blue-300"
-//                             : status === "On_Notice"
-//                             ? "bg-yellow-100 text-yellow-700 border-yellow-300"
-//                             : status === "Resigned"
-//                             ? "bg-orange-100 text-orange-700 border-orange-300"
-//                             : status === "Terminated"
-//                             ? "bg-red-100 text-red-700 border-red-300"
-//                             : status === "Retired"
-//                             ? "bg-gray-200 text-gray-700 border-gray-300"
-//                             : "bg-gray-100 text-gray-600 border-gray-300";
+//                       {/* Actions */}
+//                       <td className="px-6 py-4 whitespace-nowrap">
+//                         <div className="flex items-center space-x-2">
+//                           <button
+//                             onClick={() => onAction("view", emp.employee_id)}
+//                             className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+//                             title="View Employee"
+//                           >
+//                             <Eye className="w-4 h-4" />
+//                           </button>
 
-//                         return <span className={`${base} ${color}`}>{status || "N/A"}</span>;
-//                       })()}
-//                     </td>
+//                           <button
+//                             onClick={() => onAction("edit", emp.employee_id)}
+//                             className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
+//                             title="Edit Employee"
+//                           >
+//                             <Edit className="w-4 h-4" />
+//                           </button>
 
-//                     {/* Actions */}
-//                     <td className="px-6 py-4 whitespace-nowrap">
-//                       <div className="flex items-center space-x-2">
-//                         <button
-//                           onClick={() => onAction("view", emp.employee_id)}
-//                           className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-//                           title="View Employee"
-//                         >
-//                           <Eye className="w-4 h-4" />
-//                         </button>
+//                           <button
+//                             onClick={() => handleOpenActivationModal(emp)}
+//                             className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
+//                             title="Manage Employee Status"
+//                           >
+//                             <CheckCircle className="w-4 h-4" />
+//                           </button>
 
-//                         <button
-//                           onClick={() => onAction("edit", emp.employee_id)}
-//                           className="p-2 text-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors"
-//                           title="Edit Employee"
-//                         >
-//                           <Edit className="w-4 h-4" />
-//                         </button>
-
-//                         <button
-//                           onClick={() => handleOpenActivationModal(emp)}
-//                           className="p-2 text-purple-600 hover:bg-purple-50 rounded-lg transition-colors"
-//                           title="Manage Employee Status"
-//                         >
-//                           <CheckCircle className="w-4 h-4" />
-//                         </button>
-
-//                         <button
-//                           onClick={() => onDelete(emp.employee_id)}
-//                           className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-//                           title="Delete Employee"
-//                         >
-//                           <Trash2 className="w-4 h-4" />
-//                         </button>
-//                       </div>
-//                     </td>
-//                   </tr>
-//                 ))
+//                           <button
+//                             onClick={() => onDelete(emp.employee_id)}
+//                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+//                             title="Delete Employee"
+//                           >
+//                             <Trash2 className="w-4 h-4" />
+//                           </button>
+//                         </div>
+//                       </td>
+//                     </tr>
+//                   );
+//                 })
 //               )}
 //             </tbody>
 //           </table>
@@ -1029,4 +1038,52 @@ export default EmployeeTable;
 // };
 
 // export default EmployeeTable;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
