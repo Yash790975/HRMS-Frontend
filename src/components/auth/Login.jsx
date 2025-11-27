@@ -6,6 +6,7 @@ import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Building2, Lock, User, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import HRMS_Logo from '../../assets/HRMS_Logo.JPG';
 
 const LoginPage = () => {
   const { login, isAuthenticated, user, isLoading } = useAuth();
@@ -98,13 +99,30 @@ const LoginPage = () => {
     <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-br from-orange-50 via-orange-100 to-orange-200">
       <div className="w-full max-w-md">
         {/* Header */}
-        <div className="text-center mb-8">
-          <div className="mx-auto w-16 h-16 bg-gradient-to-br from-orange-600 to-orange-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
-            <Building2 className="w-8 h-8 text-white" />
+        {/* <div className="text-center mb-8">
+          <div className="mx-auto w-60 h-16 bg-gradient-to-br from-orange-600 to-orange-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg">
+            
+            <img 
+              src={HRMS_Logo} 
+              alt="HRMS Logo" 
+              className="w-96 h-8 object-contain"
+            />
+            
           </div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Human Resources Management System</h1>
           <p className="text-gray-600">Sign in to access your portal</p>
-        </div>
+        </div> */}
+        <div className="text-center mb-8">
+  <div className="mx-auto w-60 h-16 bg-gradient-to-br from-orange-600 to-orange-700 rounded-2xl flex items-center justify-center mb-4 shadow-lg px-4">
+    <img 
+      src={HRMS_Logo} 
+      alt="HRMS Logo" 
+      className="w-full h-auto max-h-12 object-contain rounded-2xl"
+    />
+  </div>
+  <h1 className="text-3xl font-bold text-gray-900 mb-2">Human Resources Management System</h1>
+  <p className="text-gray-600">Sign in to access your portal</p>
+</div>
 
         {/* Login Form */}
         <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 p-8">
@@ -119,7 +137,7 @@ const LoginPage = () => {
             {/* Username */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Username
+                Email Address
               </label>
               <div className="relative">
                 <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
@@ -192,7 +210,7 @@ const LoginPage = () => {
 
             
           </form>
-           <div className="flex items-center justify-end">
+           <div className="flex items-center justify-end mt-5">
               <Link
                 to="/forgot-password"
                 className="text-sm text-blue-600 hover:text-blue-500 font-medium transition-colors duration-200"
@@ -202,7 +220,7 @@ const LoginPage = () => {
             </div>
 
           {/* Demo Credentials */}
-          <div className="mt-6 p-4 bg-gray-50 rounded-lg">
+          {/* <div className="mt-6 p-4 bg-gray-50 rounded-lg">
             <p className="text-xs text-gray-600 font-medium mb-2">Demo Credentials:</p>
             <div className="text-xs text-gray-500 space-y-1">
               <p><strong>HR:</strong> admin / password</p>
@@ -212,7 +230,7 @@ const LoginPage = () => {
               <p><strong>Finance Team Member:</strong> finance1 / finance123</p>
               <p><strong>Team Lead:</strong> teamlead1 / lead123</p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

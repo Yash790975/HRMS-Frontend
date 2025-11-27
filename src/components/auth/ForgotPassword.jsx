@@ -191,7 +191,8 @@ const ForgotPassword = () => {
 
             <div style={{marginLeft: "1px"}} className="min-w-0">
               <h1 className="font-serif font-black text-lg  bg-gradient-to-r from-orange-700 via-orange-500 to-orange-900  bg-clip-text text-transparent transition-colors duration-300 truncate">
-                Cyber Instant HRMS
+                {/* Cyber Instant HRMS */}
+                Vastorax
               </h1>
               <p className="text-xs sm:text-sm text-muted-foreground font-sans hidden xs:block">
                 Empowering Global Trade

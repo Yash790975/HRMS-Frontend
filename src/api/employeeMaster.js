@@ -9,7 +9,7 @@ export const EmployeeMasterAPI = {
   // Update employee
   update: (data) => apiCall(API_ENDPOINTS.EMPLOYEE_MASTER.UPDATE, "POST", data),
 
-  // Get all employees
+  // Get all employees 
   getAll: () => apiCall(API_ENDPOINTS.EMPLOYEE_MASTER.GET_ALL, "GET"),
 
   // Get employee by ID

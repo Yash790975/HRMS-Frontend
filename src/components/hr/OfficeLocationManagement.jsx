@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { MapPin, Plus, Search, Edit, Trash2, Eye, X, Building } from 'lucide-react';
-// import { OfficeLocationsAPI } from '../../services/api/officeLocations';
-import { OfficeLocationsAPI } from '../../api/officeLocations';
+import { OfficeLocationsAPI } from '../../api/officeLocations'
 
 const OfficeLocationManagement = () => {
   const [locations, setLocations] = useState([]);

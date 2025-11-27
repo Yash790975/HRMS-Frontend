@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
+import HRMS_Logo from '../../assets/HRMS_Logo.JPG';
 import { 
   LayoutDashboard, 
   User, 
@@ -63,13 +64,18 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
 
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl flex items-center justify-center">
-              <Building2 className="w-6 h-6 text-white" />
-            </div>
+          <div className="flex items-center space-x-3 w-full ">
+            {/* <div className="w-40 h-10 bg-gradient-to-br from-orange-600 to-orange-700 rounded-xl flex items-center justify-center"> */}
+              {/* <Building2 className="w-6 h-6 text-white" />  */}
+              <img 
+                    src={HRMS_Logo} 
+                    alt="HRMS Logo" 
+                    className="w-full h-auto max-h-12 object-contain"
+                  />
+            {/* </div> */}
             <div>
-              <h1 className="text-xl font-bold text-gray-900">HR</h1>
-              <p className="text-sm text-gray-500">Admin User</p>
+              {/* <h1 className="text-xl font-bold text-gray-900">Vastorax</h1> */}
+              {/* <p className="text-sm text-gray-500">Admin User</p> */}
             </div>
           </div>
           <button

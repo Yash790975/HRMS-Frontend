@@ -362,7 +362,8 @@ const EmployeeModal = ({ isOpen, onClose, employeeId = null, type = 'add', hideS
       }
     } catch (error) {
       console.error('Error searching employee:', error);
-      showErrorWithRetry('Failed to search employee. Please try again.');
+      showErrorWithRetry('No employee found with this mobile number. You can add a new employee.');
+      // showErrorWithRetry(error.message || 'Backend server is not responding');
     } finally {
       setIsSearching(false);
     }
@@ -455,14 +456,21 @@ const EmployeeModal = ({ isOpen, onClose, employeeId = null, type = 'add', hideS
     }
   };
 
+  // const showErrorWithRetry = (message) => {
+  //   showConfirm(
+  //     'Server Error',
+  //     `${message}\n\nServer might be unavailable. Do you want to retry?`,
+  //     () => {
+  //       window.location.reload();
+  //     },
+  //     'danger'
+  //   );
+  // };
   const showErrorWithRetry = (message) => {
-    showConfirm(
-      'Server Error',
-      `${message}\n\nServer might be unavailable. Do you want to retry?`,
-      () => {
-        window.location.reload();
-      },
-      'danger'
+    showAlert(
+      'Error',
+      message,
+      'error'
     );
   };
 
@@ -666,55 +674,141 @@ const EmployeeModal = ({ isOpen, onClose, employeeId = null, type = 'add', hideS
                   </div>
 
                   {!hideSearch && (
+                    // <div style={{
+                    //   background: '#f0f7ff',
+                    //   padding: '20px',
+                    //   borderRadius: '8px',
+                    //   marginBottom: '20px',
+                    //   border: '2px solid #2196F3'
+                    // }}>
+                    //   <h4 style={{marginTop: 0, color: '#1976d2'}}>🔍 Search Existing Employee</h4>
+                    //   <div style={{display: 'flex', gap: '10px', alignItems: 'flex-start'}}>
+                    //     <div style={{flex: 1}}>
+                    //       <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>
+                    //         Enter Mobile Number
+                    //       </label>
+                    //       <input
+                    //         type="tel"
+                    //         placeholder="Enter 10-digit mobile number"
+                    //         maxLength="10"
+                    //         value={searchMobile}
+                    //         onChange={(e) => setSearchMobile(e.target.value.replace(/\D/g, ''))}
+                    //         style={{
+                    //           width: '100%',
+                    //           padding: '10px',
+                    //           border: '1px solid #ccc',
+                    //           borderRadius: '4px',
+                    //           fontSize: '16px'
+                    //         }}
+                    //       />
+                    //     </div>
+                    //     <button
+                    //       onClick={handleMobileSearch}
+                    //       disabled={isSearching || searchMobile.length !== 10}
+                    //       style={{
+                    //         marginTop: '28px',
+                    //         padding: '10px 20px',
+                    //         background: searchMobile.length === 10 ? '#2196F3' : '#ccc',
+                    //         color: 'white',
+                    //         border: 'none',
+                    //         borderRadius: '4px',
+                    //         cursor: searchMobile.length === 10 ? 'pointer' : 'not-allowed',
+                    //         fontWeight: 'bold'
+                    //       }}
+                    //     >
+                    //       {isSearching ? 'Searching...' : 'Search'}
+                    //     </button>
+                    //   </div>
+                    //   <p style={{marginBottom: 0, marginTop: '10px', fontSize: '14px', color: '#666'}}>
+                    //     💡 Enter mobile number to check if employee already exists. If found, data will be loaded for updating.
+                    //   </p>
+                    // </div>
                     <div style={{
-                      background: '#f0f7ff',
-                      padding: '20px',
-                      borderRadius: '8px',
-                      marginBottom: '20px',
-                      border: '2px solid #2196F3'
+                    background: '#FF7D54',
+                    padding: '25px',
+                    borderRadius: '12px',
+                    marginBottom: '20px',
+                    boxShadow: '0 4px 15px rgba(255,125,84,0.3)'
+                  }}>
+                    <h4 style={{
+                      marginTop: 0, 
+                      color: 'white',
+                      fontSize: '18px',
+                      fontWeight: '600',
+                      marginBottom: '15px',
+                      letterSpacing: '0.5px'
                     }}>
-                      <h4 style={{marginTop: 0, color: '#1976d2'}}>🔍 Search Existing Employee</h4>
-                      <div style={{display: 'flex', gap: '10px', alignItems: 'flex-start'}}>
-                        <div style={{flex: 1}}>
-                          <label style={{display: 'block', marginBottom: '5px', fontWeight: 'bold'}}>
-                            Enter Mobile Number
-                          </label>
-                          <input
-                            type="tel"
-                            placeholder="Enter 10-digit mobile number"
-                            maxLength="10"
-                            value={searchMobile}
-                            onChange={(e) => setSearchMobile(e.target.value.replace(/\D/g, ''))}
-                            style={{
-                              width: '100%',
-                              padding: '10px',
-                              border: '1px solid #ccc',
-                              borderRadius: '4px',
-                              fontSize: '16px'
-                            }}
-                          />
-                        </div>
-                        <button
-                          onClick={handleMobileSearch}
-                          disabled={isSearching || searchMobile.length !== 10}
+                      Search Existing Employee
+                    </h4>
+                    <div style={{
+                      display: 'flex', 
+                      gap: '12px', 
+                      alignItems: 'flex-start'
+                    }}>
+                      <div style={{flex: 1}}>
+                        <label style={{
+                          display: 'block', 
+                          marginBottom: '8px', 
+                          fontWeight: '600',
+                          color: 'white',
+                          fontSize: '14px'
+                        }}>
+                          Enter Mobile Number
+                        </label>
+                        <input
+                          type="tel"
+                          placeholder="Enter 10-digit mobile number"
+                          maxLength="10"
+                          value={searchMobile}
+                          onChange={(e) => setSearchMobile(e.target.value.replace(/\D/g, ''))}
                           style={{
-                            marginTop: '28px',
-                            padding: '10px 20px',
-                            background: searchMobile.length === 10 ? '#2196F3' : '#ccc',
-                            color: 'white',
+                            width: '100%',
+                            padding: '12px 15px',
                             border: 'none',
-                            borderRadius: '4px',
-                            cursor: searchMobile.length === 10 ? 'pointer' : 'not-allowed',
-                            fontWeight: 'bold'
+                            borderRadius: '8px',
+                            fontSize: '16px',
+                            outline: 'none',
+                            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                            transition: 'all 0.3s ease'
                           }}
-                        >
-                          {isSearching ? 'Searching...' : 'Search'}
-                        </button>
+                        />
                       </div>
-                      <p style={{marginBottom: 0, marginTop: '10px', fontSize: '14px', color: '#666'}}>
-                        💡 Enter mobile number to check if employee already exists. If found, data will be loaded for updating.
-                      </p>
+                      <button
+                        onClick={handleMobileSearch}
+                        disabled={isSearching || searchMobile.length !== 10}
+                        style={{
+                          marginTop: '28px',
+                          padding: '12px 24px',
+                          background: searchMobile.length === 10 
+                            ? '#E8643A' 
+                            : '#95a5a6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '8px',
+                          cursor: searchMobile.length === 10 ? 'pointer' : 'not-allowed',
+                          fontWeight: '600',
+                          fontSize: '15px',
+                          boxShadow: searchMobile.length === 10  
+                            ? '0 4px 12px rgba(232,100,58,0.4)' 
+                            : 'none',
+                          transition: 'all 0.3s ease',
+                          letterSpacing: '0.5px'
+                        }}
+                      >
+                        {isSearching ? 'Searching...' : 'Search'}
+                      </button>
                     </div>
+                    <p style={{
+                      marginBottom: 0, 
+                      marginTop: '15px', 
+                      fontSize: '13px', 
+                      color: 'rgba(255,255,255,0.95)',
+                      lineHeight: '1.5',
+                      fontStyle: 'italic'
+                    }}>
+                      💡 Enter mobile number to check if employee already exists. If found, data will be loaded for updating.
+                    </p>
+                  </div>
                   )}
 
                   <div className="form-grid">
@@ -802,7 +896,7 @@ const EmployeeModal = ({ isOpen, onClose, employeeId = null, type = 'add', hideS
                       <label>Age</label>
                       <input
                         type="text"
-                        placeholder="Age will be calculated"
+                        placeholder="Enter Your Age"
                         value={formData.employee.age}
                         onChange={(e) => handleInputChange('employee', 'age', e.target.value)}
                       />
@@ -939,15 +1033,7 @@ const EmployeeModal = ({ isOpen, onClose, employeeId = null, type = 'add', hideS
                       />
                     </div>
 
-                    {/* <div className="form-group full-width">
-                      <label>University/Collage Name</label>
-                      <input
-                        type="text"
-                        placeholder="Medicaps University"
-                        value={formData.employee.university_name}
-                        onChange={(e) => handleInputChange('employee', 'university_name', e.target.value)}
-                      />
-                    </div> */} 
+                    
 
                     <div className="form-group">
                       <label>University/College Name</label>
@@ -1251,7 +1337,7 @@ const EmployeeModal = ({ isOpen, onClose, employeeId = null, type = 'add', hideS
                         onChange={(e) => handleInputChange('employment', 'employment_type', e.target.value)}
                         className={errors.employment_type ? 'error' : ''}
                       >
-                        <option value="">Full Time</option>
+                        <option value="">Select Type</option>
                         <option value="FULL_TIME">Full Time</option>
                         <option value="PART_TIME">Part Time</option>
                         <option value="CONTRACT">Contract</option>
@@ -1267,7 +1353,7 @@ const EmployeeModal = ({ isOpen, onClose, employeeId = null, type = 'add', hideS
                         onChange={(e) => handleInputChange('employment', 'work_location_type', e.target.value)}
                         className={errors.work_location_type ? 'error' : ''}
                       >
-                        <option value="">Onsite</option>
+                        <option value="">Select Location Type</option>
                         <option value="ONSITE">Onsite</option>
                         <option value="REMOTE">Remote</option>
                         <option value="HYBRID">Hybrid</option>

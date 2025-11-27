@@ -3,7 +3,7 @@ import { apiCall } from './fetchHelper';
 
 export const OfficeLocationsAPI = { 
 
-  // Add new office location
+  // Add new office location 
   add: async (data) => {
     return apiCall(API_ENDPOINTS.OFFICE_LOCATIONS.ADD, {
       method: 'POST',

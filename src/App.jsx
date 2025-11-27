@@ -2,7 +2,7 @@ import React from "react";
 import { Toaster } from 'react-hot-toast';
 import {
   BrowserRouter,
-  Routes,
+  Routes,  
   Route,
   Navigate,
   useNavigate,

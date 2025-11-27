@@ -72,7 +72,8 @@ const AdminHeader = ({ sidebarOpen, setSidebarOpen }) => {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-sm font-bold text-gray-900 truncate">
-                            {user?.name || 'Admin User'}
+                            {/* {user?.name || 'Admin User'} */}
+                            Vastorax
                           </p>
                           <p className="text-xs text-gray-600 truncate">
                             {user?.email}
