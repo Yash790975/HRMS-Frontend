@@ -1,6 +1,8 @@
 export const BASE_URL = "http://localhost:3000/hrms/";
+// export const BASE_URL = "http://hrms.api.vastorax.com/hrms/";
 //For Images
 export const IMAGE_BASE_URL = "http://localhost:3000/hrms";
+// export const IMAGE_BASE_URL = "http://hrms.api.vastorax.com/hrms";
 
 export const API_ENDPOINTS = {
   // ========================================
