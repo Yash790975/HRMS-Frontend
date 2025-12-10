@@ -17,7 +17,7 @@ import { EmployeeChildrenDetailsAPI } from "../../../api/employeeChildrenDetails
 import { EmployeeBankDetailsAPI } from "../../../api/employeeBankDetails";
 import { EmployeeReferenceseAPI } from "../../../api/employeeReferences";
 import { EmployeeDocumentChecklistAPI } from "../../../api/employeeDocumentChecklist";
-import { BASE_URL } from "../../../api/api-config";
+import { BASE_URL } from "../../../api/api-config"; 
 
 const EmployeeDetailsView = ({ employeeId, onBack }) => {
   const [employee, setEmployee] = useState(null);

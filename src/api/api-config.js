@@ -80,6 +80,8 @@ export const API_ENDPOINTS = {
     ACTIVATE: (id) => `${BASE_URL}employee/activate/${id}`,
     DEACTIVATE: (id) => `${BASE_URL}employee/deactivate/${id}`,
     CONFIRM_PROBATION: (id) => `${BASE_URL}employee/confirm-probation/${id}`, // ✅ Add this line
+
+    
   },
 
   // ========================================

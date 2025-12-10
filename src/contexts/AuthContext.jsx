@@ -1,229 +1,3 @@
-// import React, { createContext, useContext, useState } from 'react';
-// import { API_ENDPOINTS } from '../api/api-config';
-
-// const AuthContext = createContext(); 
-
-// export const useAuth = () => {
-//   const context = useContext(AuthContext);
-//   if (!context) {
-//     throw new Error('useAuth must be used within an AuthProvider');
-//   }
-//   return context;
-// };
-
-// export const AuthProvider = ({ children }) => {
-//   const [user, setUser] = useState(null);
-//   const [isAuthenticated, setIsAuthenticated] = useState(false);
-//   const [isLoading, setIsLoading] = useState(false);
-
-//   const login = async (email, password) => {
-//     console.log('=== Login Attempt ===');
-//     console.log('Email:', email);
-//     setIsLoading(true);
-    
-//     try {
-//       const response = await fetch(API_ENDPOINTS.ADMIN.LOGIN, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ email, password }),
-//       });
-
-//       const data = await response.json();
-//       console.log('Login response:', data);
-
-//       if (response.ok && data.success) {
-//         // Handle different possible response structures
-//         const userData = data.data || data.result || data.user;
-        
-//         console.log('Extracted userData:', userData);
-        
-//         if (!userData) {
-//           console.error('No user data in response!');
-//           setIsLoading(false);
-//           return false;
-//         }
-        
-//         // Set state only - no localStorage
-//         setUser(userData);
-//         setIsAuthenticated(true);
-        
-//         setIsLoading(false);
-//         console.log('Login successful');
-//         return true;
-//       } else {
-//         console.log('Login failed:', data.message || 'Unknown error');
-//         setIsLoading(false);
-//         return false;
-//       }
-//     } catch (error) {
-//       console.error('Login error:', error);
-//       setIsLoading(false);
-//       return false;
-//     }
-//   };
-
-//   const logout = () => {
-//     console.log('=== Logout ===');
-//     setUser(null);
-//     setIsAuthenticated(false);
-//     console.log('Logout complete');
-//   };
-
-//   const sendResetOTP = async (email) => {
-//     setIsLoading(true);
-    
-//     try {
-//       const response = await fetch(API_ENDPOINTS.ADMIN.REQUEST_OTP, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ email }),
-//       });
-
-//       const data = await response.json();
-//       setIsLoading(false);
-//       return response.ok && data.success;
-//     } catch (error) {
-//       console.error('Send OTP error:', error);
-//       setIsLoading(false);
-//       return false;
-//     }
-//   };
-
-//   const verifyOTPAndResetPassword = async (email, otp, newPassword) => {
-//     setIsLoading(true);
-    
-//     try {
-//       const verifyResponse = await fetch(API_ENDPOINTS.ADMIN.VERIFY_OTP, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ email, otp }),
-//       });
-
-//       const verifyData = await verifyResponse.json();
-
-//       if (!verifyResponse.ok || !verifyData.success) {
-//         setIsLoading(false);
-//         return false;
-//       }
-
-//       const resetResponse = await fetch(API_ENDPOINTS.ADMIN.CHANGE_PASSWORD, {
-//         method: 'POST',
-//         headers: {
-//           'Content-Type': 'application/json',
-//         },
-//         body: JSON.stringify({ email, otp, newPassword }),
-//       });
-
-//       const resetData = await resetResponse.json();
-//       setIsLoading(false);
-//       return resetResponse.ok && resetData.success;
-//     } catch (error) {
-//       console.error('Reset password error:', error);
-//       setIsLoading(false);
-//       return false;
-//     }
-//   };
-
-//   const updateUser = (updatedUser) => {
-//     console.log('=== Updating User ===');
-//     console.log('Updated user data:', updatedUser);
-    
-//     if (!updatedUser) {
-//       console.error('Cannot update user with null/undefined data');
-//       return;
-//     }
-    
-//     // Update state only - no localStorage
-//     setUser(updatedUser);
-//     console.log('User updated in state');
-//   };
-
-//   const value = {
-//     user,
-//     isAuthenticated,
-//     isLoading,
-//     login,
-//     logout,
-//     sendResetOTP,
-//     verifyOTPAndResetPassword,
-//     updateUser,
-//   };
-
-//   return (
-//     <AuthContext.Provider value={value}>
-//       {children}
-//     </AuthContext.Provider>
-//   );
-// };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
@@ -492,6 +266,304 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   );
 };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import React, { createContext, useContext, useState } from 'react';
+// import { API_ENDPOINTS } from '../api/api-config';
+
+// const AuthContext = createContext(); 
+
+// export const useAuth = () => {
+//   const context = useContext(AuthContext);
+//   if (!context) {
+//     throw new Error('useAuth must be used within an AuthProvider');
+//   }
+//   return context;
+// };
+
+// export const AuthProvider = ({ children }) => {
+//   const [user, setUser] = useState(null);
+//   const [isAuthenticated, setIsAuthenticated] = useState(false);
+//   const [isLoading, setIsLoading] = useState(false);
+
+//   const login = async (email, password) => {
+//     console.log('=== Login Attempt ===');
+//     console.log('Email:', email);
+//     setIsLoading(true);
+    
+//     try {
+//       const response = await fetch(API_ENDPOINTS.ADMIN.LOGIN, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email, password }),
+//       });
+
+//       const data = await response.json();
+//       console.log('Login response:', data);
+
+//       if (response.ok && data.success) {
+//         // Handle different possible response structures
+//         const userData = data.data || data.result || data.user;
+        
+//         console.log('Extracted userData:', userData);
+        
+//         if (!userData) {
+//           console.error('No user data in response!');
+//           setIsLoading(false);
+//           return false;
+//         }
+        
+//         // Set state only - no localStorage
+//         setUser(userData);
+//         setIsAuthenticated(true);
+        
+//         setIsLoading(false);
+//         console.log('Login successful');
+//         return true;
+//       } else {
+//         console.log('Login failed:', data.message || 'Unknown error');
+//         setIsLoading(false);
+//         return false;
+//       }
+//     } catch (error) {
+//       console.error('Login error:', error);
+//       setIsLoading(false);
+//       return false;
+//     }
+//   };
+
+//   const logout = () => {
+//     console.log('=== Logout ===');
+//     setUser(null);
+//     setIsAuthenticated(false);
+//     console.log('Logout complete');
+//   };
+
+//   const sendResetOTP = async (email) => {
+//     setIsLoading(true);
+    
+//     try {
+//       const response = await fetch(API_ENDPOINTS.ADMIN.REQUEST_OTP, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email }),
+//       });
+
+//       const data = await response.json();
+//       setIsLoading(false);
+//       return response.ok && data.success;
+//     } catch (error) {
+//       console.error('Send OTP error:', error);
+//       setIsLoading(false);
+//       return false;
+//     }
+//   };
+
+//   const verifyOTPAndResetPassword = async (email, otp, newPassword) => {
+//     setIsLoading(true);
+    
+//     try {
+//       const verifyResponse = await fetch(API_ENDPOINTS.ADMIN.VERIFY_OTP, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email, otp }),
+//       });
+
+//       const verifyData = await verifyResponse.json();
+
+//       if (!verifyResponse.ok || !verifyData.success) {
+//         setIsLoading(false);
+//         return false;
+//       }
+
+//       const resetResponse = await fetch(API_ENDPOINTS.ADMIN.CHANGE_PASSWORD, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({ email, otp, newPassword }),
+//       });
+
+//       const resetData = await resetResponse.json();
+//       setIsLoading(false);
+//       return resetResponse.ok && resetData.success;
+//     } catch (error) {
+//       console.error('Reset password error:', error);
+//       setIsLoading(false);
+//       return false;
+//     }
+//   };
+
+//   const updateUser = (updatedUser) => {
+//     console.log('=== Updating User ===');
+//     console.log('Updated user data:', updatedUser);
+    
+//     if (!updatedUser) {
+//       console.error('Cannot update user with null/undefined data');
+//       return;
+//     }
+    
+//     // Update state only - no localStorage
+//     setUser(updatedUser);
+//     console.log('User updated in state');
+//   };
+
+//   const value = {
+//     user,
+//     isAuthenticated,
+//     isLoading,
+//     login,
+//     logout,
+//     sendResetOTP,
+//     verifyOTPAndResetPassword,
+//     updateUser,
+//   };
+
+//   return (
+//     <AuthContext.Provider value={value}>
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
